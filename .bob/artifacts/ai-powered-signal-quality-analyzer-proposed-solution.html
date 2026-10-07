@@ -1,0 +1,384 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI-Powered Signal Quality Analyzer</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #1f2328;
+    background: #ffffff;
+  }
+  .page { max-width: 760px; margin: 0 auto; padding: 40px 24px 60px; }
+
+  /* Header */
+  .header { border-bottom: 2px solid #3b82d4; padding-bottom: 20px; margin-bottom: 32px; }
+  .header .badge { display: inline-block; background: #3b82d4; color: #fff; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.4px; margin-bottom: 10px; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #1f2328; margin-bottom: 6px; }
+  .header .sub { color: #57606a; font-size: 13px; }
+
+  /* Section */
+  .section { margin-bottom: 32px; }
+  .section h2 { font-size: 15px; font-weight: 700; color: #1f2328; border-left: 4px solid #3b82d4; padding-left: 10px; margin-bottom: 14px; }
+  .section h3 { font-size: 13px; font-weight: 700; color: #3b82d4; margin: 14px 0 6px; }
+
+  /* Problem statement */
+  .problem-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px 18px; margin-bottom: 20px; font-size: 13px; color: #57606a; }
+  .problem-box strong { color: #1f2328; }
+
+  /* Architecture flow */
+  .arch { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 16px; }
+  .arch-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 8px 12px; font-size: 12px; text-align: center; flex: 1 1 120px; }
+  .arch-box .icon { font-size: 18px; display: block; margin-bottom: 3px; }
+  .arch-box .label { font-weight: 600; color: #1f2328; display: block; }
+  .arch-box .desc { color: #57606a; font-size: 11px; }
+  .arch-arrow { align-self: center; color: #9ca3af; font-size: 18px; flex: 0 0 auto; }
+
+  /* Feature grid */
+  .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .feature-card { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 14px; }
+  .feature-card .fc-title { font-weight: 700; font-size: 13px; margin-bottom: 6px; }
+  .feature-card ul { padding-left: 16px; color: #57606a; font-size: 12px; }
+  .feature-card ul li { margin-bottom: 3px; }
+  .fc-blue   { border-top: 3px solid #3b82d4; }
+  .fc-purple { border-top: 3px solid #7c5cd8; }
+  .fc-green  { border-top: 3px solid #16a34a; }
+  .fc-orange { border-top: 3px solid #ea580c; }
+
+  /* Module table */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  th { background: #f7f8fa; text-align: left; padding: 8px 10px; border: 1px solid #e5e7eb; font-weight: 700; font-size: 12px; color: #57606a; }
+  td { padding: 8px 10px; border: 1px solid #e5e7eb; vertical-align: top; }
+  tr:nth-child(even) td { background: #fafafa; }
+  code { background: #f0f0f0; border-radius: 3px; padding: 1px 5px; font-size: 11.5px; font-family: "Consolas", monospace; color: #c0392b; }
+
+  /* Stack pills */
+  .pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .pill { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 3px 10px; font-size: 11.5px; color: #1d4ed8; font-weight: 500; }
+  .pill.ibm { background: #f5f0ff; border-color: #d8b4fe; color: #6d28d9; }
+  .pill.infra { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
+
+  /* Endpoint table */
+  .ep { display: grid; grid-template-columns: auto auto 1fr; gap: 0; }
+  .ep-row { display: contents; }
+  .ep-row div { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; font-size: 12.5px; }
+  .ep-method { font-weight: 700; font-family: monospace; background: #f7f8fa; }
+  .ep-path { font-family: monospace; color: #3b82d4; background: #f7f8fa; }
+  .ep-post { color: #16a34a; }
+  .ep-get  { color: #3b82d4; }
+
+  /* Severity badges */
+  .sev { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; margin: 2px; }
+  .sev-c { background: #fee2e2; color: #b91c1c; }
+  .sev-h { background: #ffedd5; color: #c2410c; }
+  .sev-m { background: #fef3c7; color: #b45309; }
+  .sev-l { background: #dcfce7; color: #15803d; }
+
+  /* Decision table */
+  .decision td:first-child { font-weight: 600; font-size: 12.5px; white-space: nowrap; }
+  .decision td:last-child  { color: #57606a; font-size: 12.5px; }
+
+  /* Flow diagram */
+  .flow { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; padding: 18px; margin: 10px 0; font-size: 12px; }
+  .flow-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+  .flow-num { background: #3b82d4; color: #fff; border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .flow-text strong { display: block; font-size: 12.5px; }
+  .flow-text span { color: #57606a; }
+
+  /* Footer */
+  .footer { margin-top: 48px; border-top: 1px solid #e5e7eb; padding-top: 14px; text-align: center; font-size: 11.5px; color: #9ca3af; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  
+  <div class="header">
+    <span class="badge">Problem Statement No. 25</span>
+    <h1>📡 AI-Powered Signal Quality Analyzer</h1>
+    <div class="sub">An intelligent telecom monitoring system that analyzes SNR, BER &amp; latency — detects degradation, explains root causes, and predicts failures using IBM Granite via watsonx.ai.</div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Problem Statement</h2>
+    <div class="problem-box">
+      <strong>Challenge:</strong> Reliable telecom systems depend on signal quality metrics — Signal-to-Noise Ratio (SNR), Bit Error Rate (BER), and latency. Engineers need an intelligent system that <strong>analyzes measurement data</strong>, <strong>detects degradation</strong>, <strong>explains root causes</strong>, and <strong>predicts failures</strong> before they impact service.
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Solution Architecture</h2>
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-num">1</div>
+        <div class="flow-text">
+          <strong>Data Ingestion</strong>
+          <span>CSV/JSON upload or synthetic generator → schema validation, missing-value imputation, outlier clipping, rolling stats (mean, std, EWMA, trend) per node</span>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">2</div>
+        <div class="flow-text">
+          <strong>Detection Engine</strong>
+          <span>4-layer detection: rule-based thresholds + rolling z-score + Isolation Forest + degradation/interference pattern analysis → severity scoring (Normal → Low → Medium → High → Critical)</span>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">3</div>
+        <div class="flow-text">
+          <strong>Forecasting Engine</strong>
+          <span>Per-node Prophet → ARIMA → GBM cascade for SNR, BER &amp; latency → failure probability (0–1), time-to-failure (hours), risk ranking</span>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">4</div>
+        <div class="flow-text">
+          <strong>IBM Granite Insights</strong>
+          <span>Structured context sent to watsonx.ai → root cause, confidence score, affected nodes, prioritized recommendations + plain-language engineer summary. Deterministic mock fallback when offline.</span>
+        </div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">5</div>
+        <div class="flow-text">
+          <strong>FastAPI + Streamlit</strong>
+          <span>REST layer (5 endpoints) consumed by a 6-tab Streamlit dashboard with upload panel, time-series charts, anomaly table, node heatmap, forecast charts, and AI insights panel</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Technology Stack</h2>
+    <div class="pills">
+      <span class="pill ibm">IBM Granite (granite-13b-instruct-v2)</span>
+      <span class="pill ibm">watsonx.ai API</span>
+      <span class="pill ibm">IBM Cloud Code Engine</span>
+      <span class="pill">Python 3.11/3.12</span>
+      <span class="pill">FastAPI</span>
+      <span class="pill">Streamlit</span>
+      <span class="pill">pandas · numpy</span>
+      <span class="pill">scikit-learn</span>
+      <span class="pill">Prophet</span>
+      <span class="pill">statsmodels (ARIMA)</span>
+      <span class="pill">Plotly</span>
+      <span class="pill infra">Docker</span>
+      <span class="pill infra">pytest (67 tests)</span>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Core Features</h2>
+    <div class="feature-grid">
+      <div class="feature-card fc-blue">
+        <div class="fc-title">📥 Signal Data Processing</div>
+        <ul>
+          <li>CSV / JSON upload with schema validation</li>
+          <li>Column aliases (snr_db, latency_ms)</li>
+          <li>Per-node ffill/bfill + median imputation</li>
+          <li>Physical range clipping</li>
+          <li>Rolling mean, std, EWMA (windows 5/15/30)</li>
+          <li>Linear trend coefficient per node</li>
+          <li>Synthetic generator: 5 scenarios</li>
+        </ul>
+      </div>
+      <div class="feature-card fc-orange">
+        <div class="fc-title">⚠️ Anomaly &amp; Degradation Detection</div>
+        <ul>
+          <li>Rule-based: SNR &lt; 10 dB, BER &gt; 1e-3, latency &gt; 150 ms</li>
+          <li>Rolling z-score per node (window=30)</li>
+          <li>Isolation Forest (contamination=5%)</li>
+          <li>Severity: Normal / Low / Medium / High / Critical</li>
+          <li>Correlated SNR↓ + BER↑ interference detection</li>
+          <li>Periodic burst detection (autocorrelation)</li>
+          <li>Sustained trend degradation flagging</li>
+        </ul>
+      </div>
+      <div class="feature-card fc-purple">
+        <div class="fc-title">🤖 IBM Granite AI Insights</div>
+        <ul>
+          <li>Context-aware prompt to Granite-13b-instruct</li>
+          <li>Returns: root cause, confidence (0–1)</li>
+          <li>Affected nodes + time window</li>
+          <li>Prioritized, actionable recommendations</li>
+          <li>Plain-language engineer summary</li>
+          <li>Structured JSON response schema</li>
+          <li>Full offline mock fallback (no credentials needed)</li>
+        </ul>
+      </div>
+      <div class="feature-card fc-green">
+        <div class="fc-title">🔮 Failure Prediction</div>
+        <ul>
+          <li>Prophet → ARIMA → GBM cascade per metric</li>
+          <li>Log-transform on BER (6 orders of magnitude)</li>
+          <li>95% confidence bands on forecasts</li>
+          <li>Failure probability: logistic from breach fraction</li>
+          <li>Time-to-failure (hours until first breach)</li>
+          <li>Risk ranking: Low / Medium / High / Critical</li>
+          <li>MAE + RMSE on 20% holdout</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Synthetic Data Scenarios</h2>
+    <table>
+      <thead>
+        <tr><th>Scenario</th><th>Description</th><th>Simulates</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>normal</code></td><td>Stable signal with mild Gaussian noise</td><td>Baseline healthy node</td></tr>
+        <tr><td><code>gradual_degrade</code></td><td>SNR slowly drops, BER/latency rise over time</td><td>Connector corrosion, cable aging</td></tr>
+        <tr><td><code>sudden_drop</code></td><td>1–2 abrupt step-change events</td><td>Hardware fault, power cut</td></tr>
+        <tr><td><code>interference</code></td><td>Periodic 30-min burst pattern</td><td>Co-channel / industrial RF source</td></tr>
+        <tr><td><code>bursty_noise</code></td><td>Random spikes on ~8% of samples</td><td>Transient interference, weather</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <h2>Severity Scoring Model</h2>
+    <p style="font-size:13px;color:#57606a;margin-bottom:10px">Each row accumulates a score from all triggered flags. Extreme values add bonus points.</p>
+    <table>
+      <thead><tr><th>Score</th><th>Label</th><th>Triggered by</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td><span class="sev" style="background:#f0f0f0;color:#57606a">Normal</span></td><td>No flags</td></tr>
+        <tr><td>1</td><td><span class="sev sev-l">Low</span></td><td>1 flag (e.g. z-score OR rule breach)</td></tr>
+        <tr><td>2</td><td><span class="sev sev-m">Medium</span></td><td>2 flags</td></tr>
+        <tr><td>3–4</td><td><span class="sev sev-h">High</span></td><td>3–4 flags or moderately extreme values</td></tr>
+        <tr><td>≥ 5</td><td><span class="sev sev-c">Critical</span></td><td>5+ flags or SNR &lt; 5 dB / BER &gt; 1e-2 / latency &gt; 300 ms</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <h2>REST API Endpoints</h2>
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><strong style="color:#16a34a">POST</strong></td><td><code>/upload</code></td><td>Upload CSV/JSON or generate synthetic data. Triggers ingestion + detection automatically.</td></tr>
+        <tr><td><strong style="color:#3b82d4">GET</strong></td><td><code>/anomalies</code></td><td>Anomaly list, interference events, degradation events, node health. Filterable by node &amp; severity.</td></tr>
+        <tr><td><strong style="color:#3b82d4">GET</strong></td><td><code>/insights</code></td><td>IBM Granite AI insights (cached). Pass <code>?refresh=true</code> to regenerate.</td></tr>
+        <tr><td><strong style="color:#3b82d4">GET</strong></td><td><code>/forecast</code></td><td>Per-node forecasts + failure risk ranking. Configurable <code>horizon_hours</code>.</td></tr>
+        <tr><td><strong style="color:#3b82d4">GET</strong></td><td><code>/health</code></td><td>Service liveness, dataset summary (rows, nodes, filename).</td></tr>
+        <tr><td><strong style="color:#3b82d4">GET</strong></td><td><code>/nodes</code></td><td>Node list with per-node health scores.</td></tr>
+        <tr><td><strong style="color:#3b82d4">GET</strong></td><td><code>/raw</code></td><td>Cleaned time-series data for charting.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <h2>Streamlit Dashboard — 6 Tabs</h2>
+    <table>
+      <thead><tr><th>Tab</th><th>Contents</th></tr></thead>
+      <tbody>
+        <tr><td>📊 <strong>Overview</strong></td><td>KPI metrics, severity pie chart, node health bar chart, degradation &amp; interference event cards</td></tr>
+        <tr><td>📈 <strong>Time Series</strong></td><td>Multi-node signal charts with anomaly overlays, threshold lines, rolling-mean subplots</td></tr>
+        <tr><td>⚠️ <strong>Anomalies</strong></td><td>Filterable anomaly table (color-coded by severity), flag-type breakdown bar chart</td></tr>
+        <tr><td>🗺️ <strong>Node Heatmap</strong></td><td>Health metrics heatmap, SNR vs anomaly-rate scatter, full node stats table</td></tr>
+        <tr><td>🔮 <strong>Forecast</strong></td><td>Failure risk ranking table, per-node forecast chart with 95% CI bands, MAE/RMSE metrics</td></tr>
+        <tr><td>🤖 <strong>AI Insights</strong></td><td>Root cause analysis, confidence gauge, plain-language summary, prioritized recommendations</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <h2>Module Breakdown</h2>
+    <table>
+      <thead><tr><th>File</th><th>Responsibility</th><th>Key exports</th></tr></thead>
+      <tbody>
+        <tr><td><code>src/ingestion.py</code></td><td>Load, validate, clean, enrich, generate</td><td><code>ingest()</code>, <code>generate_synthetic()</code></td></tr>
+        <tr><td><code>src/detection.py</code></td><td>All anomaly &amp; pattern detection</td><td><code>detect()</code> → <code>DetectionResult</code></td></tr>
+        <tr><td><code>src/forecasting.py</code></td><td>Forecasting, failure risk, TTF</td><td><code>forecast()</code> → <code>ForecastResult</code></td></tr>
+        <tr><td><code>src/insights.py</code></td><td>Granite API + mock fallback</td><td><code>generate_insights()</code></td></tr>
+        <tr><td><code>src/api.py</code></td><td>FastAPI app, all endpoints</td><td><code>app</code> (ASGI)</td></tr>
+        <tr><td><code>app/main.py</code></td><td>Streamlit dashboard, 6 tabs</td><td>Runs with <code>streamlit run</code></td></tr>
+        <tr><td><code>tests/</code></td><td>67 unit tests (pytest)</td><td>3 test modules, all passing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <h2>Key Design Decisions</h2>
+    <table class="decision">
+      <thead><tr><th>Decision</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td>Prophet → ARIMA → GBM cascade</td><td>Graceful degradation: Prophet handles seasonality best; ARIMA is faster; GBM with lag features is always available as a reliable fallback</td></tr>
+        <tr><td>Log-transform on BER</td><td>BER spans 6+ orders of magnitude — log-scale makes it approximately Gaussian, improving fit for all statistical models</td></tr>
+        <tr><td>Hybrid detection (rules + ML)</td><td>Rule-based flags catch known operational thresholds reliably; Isolation Forest catches novel multi-dimensional patterns that rules miss</td></tr>
+        <tr><td>Deterministic mock for Granite</td><td>Enables full offline operation and demos without credentials; mock is context-aware and returns the identical JSON schema as the real API</td></tr>
+        <tr><td>In-memory AppState in API</td><td>Appropriate for prototype/demo; designed to be swapped for Redis or a database for multi-user production deployments</td></tr>
+        <tr><td>Modules called directly from Streamlit</td><td>No HTTP round-trip needed for the dashboard — faster, simpler, single-process for local use</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <h2>IBM Cloud Deployment</h2>
+    <div class="flow">
+      <div class="flow-row">
+        <div class="flow-num">1</div>
+        <div class="flow-text"><strong>Build Docker image</strong><span> — multi-stage Dockerfile (builder + slim runtime), non-root user, exposes ports 8501 (Streamlit) + 8000 (FastAPI)</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">2</div>
+        <div class="flow-text"><strong>Push to IBM Container Registry</strong><span> — <code>ibmcloud cr push us.icr.io/signal-analyzer-ns/signal-analyzer:latest</code></span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">3</div>
+        <div class="flow-text"><strong>Deploy to Code Engine</strong><span> — <code>ibmcloud ce application create</code> with env vars for WATSONX_API_KEY, WATSONX_PROJECT_ID. Min scale = 1.</span></div>
+      </div>
+      <div class="flow-row">
+        <div class="flow-num">4</div>
+        <div class="flow-text"><strong>Optional: Cloud Object Storage</strong><span> — bind COS bucket for persistent dataset uploads instead of in-memory state</span></div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Quick Start</h2>
+    <div style="background:#1f2328;color:#e6edf3;border-radius:6px;padding:16px 20px;font-family:Consolas,monospace;font-size:13px;line-height:1.8">
+      <span style="color:#8b949e"># Install</span><br />
+      pip install -r requirements.txt<br /><br />
+      <span style="color:#8b949e"># Run dashboard (one command)</span><br />
+      streamlit run app/main.py<br /><br />
+      <span style="color:#8b949e"># Run REST API</span><br />
+      cd src &amp;&amp; uvicorn api:app --reload --port 8000<br /><br />
+      <span style="color:#8b949e"># Run tests</span><br />
+      pytest tests/ -v
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <h2>Environment Variables</h2>
+    <table>
+      <thead><tr><th>Variable</th><th>Required</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>WATSONX_API_KEY</code></td><td>No (mock if absent)</td><td>IBM Cloud API key for watsonx.ai</td></tr>
+        <tr><td><code>WATSONX_PROJECT_ID</code></td><td>No (mock if absent)</td><td>watsonx.ai project ID</td></tr>
+        <tr><td><code>WATSONX_URL</code></td><td>No</td><td>Regional endpoint (default: us-south)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>
